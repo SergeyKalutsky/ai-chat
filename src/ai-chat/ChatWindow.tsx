@@ -7,43 +7,48 @@ interface ChatWindowProps {
 }
 
 
-const sendMessage = async (message: string) => {
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      messages: [
-        {
-          role: "developer",
-          content: "You are a helpful assistant."
-        },
-        {
-          role: "user",
-          content: message
-        }
-      ]
-    })
-  });
-
-  const data = await response.json();
-  console.log(data);
-};
-
 
 export default function ChatWindow({ onClose }: ChatWindowProps) {
-
   const [message, setMessage] = useState("");
+  const [gptResponse, setGptResponse] = useState("");
+
+  const sendMessage = async (message: string) => {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "developer",
+            content: "You are a helpful assistant."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    setGptResponse(data.choices[0].message.content)
+  };
+
   return (
     <div className="fixed bottom-0 right-0 w-2/3 h-full bg-[#332c27] text-white flex flex-col justify-end p-4 z-40 rounded-t-lg shadow-lg">
       <div className="flex justify-end p-2">
         <FaTimes className="cursor-pointer text-xl m-2" onClick={onClose} />
       </div>
       <div className="flex-grow overflow-y-auto p-4">
-        {/* Chat messages will go here */}
+        {gptResponse && (
+          <div className="bg-[#44403c] p-4 rounded-lg mb-4">
+            <p>{gptResponse}</p>
+          </div>
+        )}
       </div>
       <div className="relative h-1/7">
         <textarea
