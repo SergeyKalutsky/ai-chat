@@ -11,7 +11,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
   return (
     <div className="fixed bottom-0 right-0 w-2/3 h-full bg-[#332c27] text-white flex flex-col justify-end p-4 z-40 rounded-t-lg shadow-lg">
       <div className="flex justify-end p-2">
-        <FaTimes className="cursor-pointer" onClick={onClose} />
+        <FaTimes className="cursor-pointer text-xl m-2" onClick={onClose} />
       </div>
       <div className="flex-grow overflow-y-auto p-4">
         {/* Chat messages will go here */}
@@ -25,6 +25,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
         <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer"
           onClick={() => { console.log(message) }}
         />
+        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer text-2xl m-2" />
       </div>
     </div>
   );
