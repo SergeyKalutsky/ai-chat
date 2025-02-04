@@ -22,10 +22,9 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
           placeholder="Type your message..."
           onInput={(e) => setMessage(e.currentTarget.value)}
         />
-        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer"
-          onClick={() => { console.log(message) }}
+        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer text-2xl m-2" 
+        onClick={() => { console.log(message) }}
         />
-        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer text-2xl m-2" />
       </div>
     </div>
   );
