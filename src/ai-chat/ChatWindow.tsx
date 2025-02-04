@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FaTimes, FaPaperPlane } from "react-icons/fa";
 
 interface ChatWindowProps {
@@ -5,7 +6,8 @@ interface ChatWindowProps {
 }
 
 
-export default function ChatWindow({ onClose }: ChatWindowProps) { 
+export default function ChatWindow({ onClose }: ChatWindowProps) {
+  const [message, setMessage] = useState("");
   return (
     <div className="fixed bottom-0 right-0 w-2/3 h-full bg-[#332c27] text-white flex flex-col justify-end p-4 z-40 rounded-t-lg shadow-lg">
       <div className="flex justify-end p-2">
@@ -18,8 +20,11 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
         <textarea
           className="w-full p-2 rounded bg-[#595452] text-white h-full"
           placeholder="Type your message..."
+          onInput={(e) => setMessage(e.currentTarget.value)}
         />
-        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer" />
+        <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer"
+          onClick={() => { console.log(message) }}
+        />
       </div>
     </div>
   );
