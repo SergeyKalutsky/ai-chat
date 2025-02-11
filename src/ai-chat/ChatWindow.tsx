@@ -9,11 +9,13 @@ interface ChatWindowProps {
 
 
 export default function ChatWindow({ onClose }: ChatWindowProps) {
+  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [gptResponse, setGptResponse] = useState("");
 
   const sendMessage = async (message: string) => {
     setMessage('');
+    setIsLoading(true);
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -37,6 +39,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
 
     const data = await response.json();
     setGptResponse(data.choices[0].message.content)
+    setIsLoading(false);
   };
 
   return (
@@ -45,9 +48,17 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
         <FaTimes className="cursor-pointer text-xl m-2" onClick={onClose} />
       </div>
       <div className="flex-grow overflow-y-auto p-4">
-        {gptResponse && (
+        {gptResponse && !isLoading &&(
           <div className="bg-[#44403c] p-4 rounded-lg mb-4">
             <p>{gptResponse}</p>
+          </div>
+        )}
+        {isLoading && (
+          <div className="bg-[#44403c] p-4 rounded-lg mb-4">
+            <p>
+            <svg className="mr-3 size-5 animate-spin bg-sky-50" viewBox="0 0 24 24"></svg>
+              Loading....
+              </p>
           </div>
         )}
       </div>
