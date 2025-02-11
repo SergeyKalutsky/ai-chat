@@ -13,6 +13,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
   const [gptResponse, setGptResponse] = useState("");
 
   const sendMessage = async (message: string) => {
+    setMessage('');
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -54,7 +55,14 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
         <textarea
           className="w-full p-2 rounded bg-[#595452] text-white h-full"
           placeholder="Type your message..."
+          value={message}
           onInput={(e) => setMessage(e.currentTarget.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              sendMessage(message);
+            }
+          }}
         />
         <FaPaperPlane className="absolute right-2 bottom-2 cursor-pointer text-2xl m-2"
           onClick={() => { sendMessage(message) }}
