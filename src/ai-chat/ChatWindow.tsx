@@ -67,7 +67,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
               // pl-6 for left padding (~1.5em)
               <ol className="list-decimal my-4 pl-6" {...props} />
             ),
-            li: ({ node, ...props }) => <li className="text-left" {...props} />,
+            li: ({ node, ...props }) => <li className="text-left m-2" {...props} />,
             code({ node, inline, className, children, ...props }) {
               // If the code tag is inside a pre, it will be rendered as a block,
               // so use SyntaxHighlighter only for block code.
@@ -84,7 +84,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
               // Otherwise, render inline code with custom styling.
               return (
                 <code
-                  className={`bg-[#0e1027] text-white px-1 py-0.5 rounded ${className || ""}`}
+                  className={`bg-[#363848] text-white px-1 py-0.5 rounded ${className || ""}`}
                   {...props}
                 >
                   {children}
@@ -108,7 +108,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
           </div>
         )}
       </div>
-      <div className="relative h-1/7">
+      <div className="relative min- h-1/7">
         <textarea
           className="w-full p-2 rounded bg-[#595452] text-white h-full resize-none focus:outline-none"
           placeholder="Type your message..."
