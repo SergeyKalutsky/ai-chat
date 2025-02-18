@@ -17,6 +17,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
   const [gptResponse, setGptResponse] = useState('');
 
   const sendMessage = async (message: string) => {
+    if (message.trim() === "") return;
     setMessage('');
     setIsLoading(true);
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -46,32 +47,54 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 w-2/3 h-full bg-[#332c27] text-white flex flex-col justify-end p-4 z-40 rounded-t-lg shadow-lg">
+    <div className="fixed bottom-0 right-0 w-2/3 h-full bg-[#1d1d1d] text-white flex flex-col justify-end p-4 z-40 rounded-t-lg shadow-lg">
       <div className="flex justify-end p-2">
         <FaTimes className="cursor-pointer text-xl m-2" onClick={onClose} />
       </div>
-      <div className="flex-grow overflow-y-auto p-4">
+      <div className="flex-grow overflow-y-auto p-4 custom-scroll">
         {gptResponse && !isLoading && (
           <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            className="prose prose-invert max-w-none"
-            components={{
-              code({ node, inline, className, children, ...props }) {
+          remarkPlugins={[remarkGfm]}
+          className="prose prose-invert max-w-none"
+          components={{
+            h1: ({ node, ...props }) => <h2 className="text-left" {...props} />,
+            h2: ({ node, ...props }) => <h2 className="text-left" {...props} />,
+            h3: ({ node, ...props }) => <h3 className="text-left" {...props} />,
+            p: ({ node, ...props }) => <p className="text-left" {...props} />,
+            ol: ({ node, ...props }) => (
+              // Tailwind: list-decimal for decimal numbering,
+              // my-4 for vertical margins (~1em),
+              // pl-6 for left padding (~1.5em)
+              <ol className="list-decimal my-4 pl-6" {...props} />
+            ),
+            li: ({ node, ...props }) => <li className="text-left" {...props} />,
+            code({ node, inline, className, children, ...props }) {
+              // If the code tag is inside a pre, it will be rendered as a block,
+              // so use SyntaxHighlighter only for block code.
+              if (!inline) {
                 const match = /language-(\w+)/.exec(className || "");
-                return !inline && match ? (
-                  <SyntaxHighlighter style={materialDark} language={match[1]} {...props}>
-                    {String(children).replace(/\n$/, "")}
-                  </SyntaxHighlighter>
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-            }}
-          >
-            {gptResponse}
-          </ReactMarkdown>
+                if (match) {
+                  return (
+                    <SyntaxHighlighter style={materialDark} language={match[1]} {...props}>
+                      {String(children).replace(/\n$/, "")}
+                    </SyntaxHighlighter>
+                  );
+                }
+              }
+              // Otherwise, render inline code with custom styling.
+              return (
+                <code
+                  className={`bg-[#0e1027] text-white px-1 py-0.5 rounded ${className || ""}`}
+                  {...props}
+                >
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {gptResponse}
+        </ReactMarkdown>
         )}
         {isLoading && (
           <div className="bg-[#44403c] p-4 rounded-lg mb-4 flex">
@@ -87,7 +110,7 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
       </div>
       <div className="relative h-1/7">
         <textarea
-          className="w-full p-2 rounded bg-[#595452] text-white h-full"
+          className="w-full p-2 rounded bg-[#595452] text-white h-full resize-none focus:outline-none"
           placeholder="Type your message..."
           value={message}
           onInput={(e) => setMessage(e.currentTarget.value)}
