@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { FaTimes, FaPaperPlane } from "react-icons/fa";
 import API_KEY from "./apiKey";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface ChatWindowProps {
   onClose: () => void;
 }
 
 
-
 export default function ChatWindow({ onClose }: ChatWindowProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [gptResponse, setGptResponse] = useState("");
+  const [gptResponse, setGptResponse] = useState('');
 
   const sendMessage = async (message: string) => {
     setMessage('');
@@ -49,9 +52,26 @@ export default function ChatWindow({ onClose }: ChatWindowProps) {
       </div>
       <div className="flex-grow overflow-y-auto p-4">
         {gptResponse && !isLoading && (
-          <div className="bg-[#44403c] p-4 rounded-lg mb-4">
-            <p>{gptResponse}</p>
-          </div>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            className="prose prose-invert max-w-none"
+            components={{
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || "");
+                return !inline && match ? (
+                  <SyntaxHighlighter style={materialDark} language={match[1]} {...props}>
+                    {String(children).replace(/\n$/, "")}
+                  </SyntaxHighlighter>
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+            }}
+          >
+            {gptResponse}
+          </ReactMarkdown>
         )}
         {isLoading && (
           <div className="bg-[#44403c] p-4 rounded-lg mb-4 flex">
